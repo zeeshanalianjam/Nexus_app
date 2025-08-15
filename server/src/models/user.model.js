@@ -7,6 +7,7 @@ const userSchema = new mongoose.Schema({
     username: {
         type: String,
         trim: true,
+        
     },
     email: {
         type: String,
@@ -25,6 +26,7 @@ const userSchema = new mongoose.Schema({
     },
     profilePicture: {
         type: String,
+        default : "",
     },
     bio: {
         type: String,

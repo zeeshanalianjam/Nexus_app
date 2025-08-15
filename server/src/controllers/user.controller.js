@@ -23,8 +23,8 @@ const generateAccessAndRefreshTokens = async (userId) => {
 
 const register = AsyncHandler(async (req, res) => {
     try {
-        const { username, email, password, role } = req.body;
-        if (!username || !email || !password, !role) {
+        const { username, email, password, bio, role } = req.body;
+        if (!username || !email || !password || !bio || !role) {
             return res.status(400).json(new ApiError(400, "All fields are required"));
         }
 
@@ -41,12 +41,24 @@ const register = AsyncHandler(async (req, res) => {
             username,
             email,
             password,
+            bio,
             role
         });
 
+        const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(newUser._id);
+
+        const cookieOptions = {
+            httpOnly: true,
+            secure: true,
+        }
+
         const user = await User.findById(newUser._id).select("-password -refreshToken");
 
-        return res.status(201).json(new ApiResponse(201, "You have been registered successfully", user));
+        return res.status(201).cookie("refreshToken", refreshToken, cookieOptions).cookie("accessToken", accessToken, cookieOptions).json(new ApiResponse(201, "You have been registered successfully", {
+            user,
+            accessToken,
+            refreshToken,
+        }));
 
     } catch (error) {
         return res.status(500).json(new ApiError(500, "Error in register the user", error.message));
