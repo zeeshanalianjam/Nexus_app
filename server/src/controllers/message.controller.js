@@ -1,4 +1,6 @@
+import { io, userSocketMap } from "../index.js";
 import { Message } from "../models/message.model.js";
+import { User } from "../models/user.model.js";
 import { uploadImagetoCloudianry } from "../services/cloudinary.js";
 import { ApiError } from "../utils/apiError.js";
 import { ApiResponse } from "../utils/apiResponse.js";
@@ -8,6 +10,10 @@ import { AsyncHandler } from "../utils/asyncHandler.js";
 const getUsersForSidebar = AsyncHandler(async (req, res) => {
     try {
         const userId = req.user._id;
+
+        if(!userId) {
+            return res.status(400).json(new ApiError(400, "User ID is required"));
+        }   
         const filteredUsers = await User.find({ _id: { $ne: userId } }).select("-password -refreshToken");
 
         // count number of messages not seen by the user
@@ -63,7 +69,7 @@ const getMessages = AsyncHandler(async (req, res) => {
 const markMessageAsSeen = AsyncHandler(async (req, res) => {
     try {
         const { id } = req.params;
-        const message = await Message.findOneAndUpdate(id, { seen: true }, { new: true });
+        const message = await Message.findByIdAndUpdate(id, { seen: true }, { new: true });
 
         if (!message) {
             return res.status(404).json(new ApiError(404, "Message not found"));
@@ -94,6 +100,12 @@ const sendMessage = AsyncHandler(async (req, res) => {
             senderId,
             receiverId
         });
+
+        // Emit the new message to the receiver's socket
+        const receiverSocketId = userSocketMap[receiverId];
+        if (receiverSocketId) {
+            io.to(receiverSocketId).emit('newMessage', newMessage);
+        }
 
         return res.status(201).json(new ApiResponse(201, "Message sent successfully", newMessage));
 
