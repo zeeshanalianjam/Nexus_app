@@ -167,5 +167,14 @@ const getUserById = AsyncHandler(async (req, res) => {
     }
 })
 
+const checkAuth = AsyncHandler(async (req, res) => {
+    try {
+        const user = req.user;
+        return res.status(200).json(new ApiResponse(200, "User authenticated successfully", user));
+    } catch (error) {
+        return res.status(500).json(new ApiError(500, "Error in checking authentication", error.message));
+    }
+})
 
-export { register, login, updateUserProfile, generateAccessAndRefreshTokens, updateUserProfileImage, getAllUsers, getUserById };
+
+export { register, login, updateUserProfile, generateAccessAndRefreshTokens, updateUserProfileImage, getAllUsers, getUserById, checkAuth };
