@@ -84,19 +84,12 @@ const markMessageAsSeen = AsyncHandler(async (req, res) => {
 
 const sendMessage = AsyncHandler(async (req, res) => {
     try {
-        const {text, image} = req.body;
+        const {text} = req.body;
         const senderId = req.user._id;
         const receiverId = req.params.id;
 
-        let imageUrl = "";
-        if (image) {
-           const response  = uploadImagetoCloudianry(image)
-              imageUrl = response.url;
-        }
-
         const newMessage = await Message.create({
             text,
-            image: imageUrl,
             senderId,
             receiverId
         });
@@ -114,4 +107,31 @@ const sendMessage = AsyncHandler(async (req, res) => {
     }
 })
 
-export { getUsersForSidebar, getMessages, markMessageAsSeen, sendMessage };
+const sendMessageImage = AsyncHandler(async (req, res) => {
+    try {
+        const image = req?.file?.path;
+        const senderId = req.user._id;
+        const receiverId = req.params.id;
+
+        const response = await uploadImagetoCloudianry(image);
+        const imageUrl = response.url;
+
+        const newMessage = await Message.create({
+            image: imageUrl,
+            senderId,
+            receiverId
+        });
+
+        // Emit the new message to the receiver's socket
+        const receiverSocketId = userSocketMap[receiverId];
+        if (receiverSocketId) {
+            io.to(receiverSocketId).emit('newMessage', newMessage);
+        }
+
+        return res.status(201).json(new ApiResponse(201, "Message sent successfully", newMessage));
+    } catch (error) {
+        return res.status(500).json(new ApiError(500, "Error in sending message", error.message));
+    }
+})
+
+export { getUsersForSidebar, getMessages, markMessageAsSeen, sendMessage, sendMessageImage };

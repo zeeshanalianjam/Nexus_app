@@ -114,7 +114,9 @@ const updateUserProfile = AsyncHandler(async (req, res) => {
         Object.assign(user, req.body);
         const savedUser = await user.save();
 
-        return res.status(200).json(new ApiResponse(200, "Your profile updated successfully", savedUser));
+        const updatedUser = await User.findById(savedUser._id).select("-password -refreshToken");
+
+        return res.status(200).json(new ApiResponse(200, "Your profile updated successfully", updatedUser));
     } catch (error) {
         return res.status(500).json(new ApiError(500, "Error in updating user profile", error.message));
     }
@@ -134,7 +136,8 @@ const updateUserProfileImage = AsyncHandler(async (req, res) => {
         const uploadedImage = await uploadImagetoCloudianry(image);
 
         user.profilePicture = uploadedImage.url;
-        const updatedUser = await user.save(); 
+        const saveUser = await user.save()
+        const updatedUser = await User.findById(saveUser._id).select("profilePicture");
         return res.status(200).json(new ApiResponse(200, "Profile image updated successfully", updatedUser));
 
     } catch (error) {
