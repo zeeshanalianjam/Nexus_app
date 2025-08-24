@@ -44,9 +44,11 @@ connectDB().then(() => {
     app.on('error', (err) => {
         console.error('Server error:', err);
     });
-    server.listen(port, () => {
+   if(process.env.NODE_ENV !== "production"){
+     server.listen(port, () => {
         console.log(`Server is running on port http://localhost:${port}`);
     });
+   }
 }).catch((err) => {
     console.error('Database connection failed:', err);
     process.exit(1); 
@@ -54,3 +56,6 @@ connectDB().then(() => {
 
 
 export { io, userSocketMap }; // Export io and userSocketMap for use in other modules
+
+
+export default server; // Export server for vercel

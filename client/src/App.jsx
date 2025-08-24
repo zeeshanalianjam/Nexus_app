@@ -14,7 +14,7 @@ const {authUser, loading}  = useContext(AuthContext)
 if(loading) return <div className="bg-[url('./assets/bgImage.svg')] bg-cover bg-no-repeat flex items-center justify-center h-screen text-white">Loading...</div>
 
   return (
-    <div className="bg-[url('./assets/bgImage.svg')] bg-cover bg-no-repeat ">
+    <div className="bg-[url('/bgImage.svg')] bg-cover bg-no-repeat ">
       <Routes>
         <Route path="/" element={authUser ? <HomePage /> : <Navigate to="/login" />} />
         <Route path="/login" element={!authUser ? <LoginPage /> : <Navigate to={"/"} />} />
