@@ -81,6 +81,26 @@ const markMessageAsSeen = AsyncHandler(async (req, res) => {
     }
 })
 
+// Mark all messages from a specific user as seen
+const markMessagesAsSeen = AsyncHandler(async (req, res) => {
+    try {
+        const { senderId } = req.params;
+        const receiverId = req.user._id;
+
+        // Update all messages from senderId to receiverId as seen
+        const result = await Message.updateMany(
+            { senderId, receiverId, seen: false },
+            { $set: { seen: true } }
+        );
+
+        return res.status(200).json(new ApiResponse(200, `Marked ${result.modifiedCount} messages as seen`, {
+            modifiedCount: result.modifiedCount
+        }));
+    } catch (error) {
+        return res.status(500).json(new ApiError(500, "Error in marking messages as seen", error.message));
+    }
+});
+
 
 const sendMessage = AsyncHandler(async (req, res) => {
     try {
@@ -134,4 +154,4 @@ const sendMessageImage = AsyncHandler(async (req, res) => {
     }
 })
 
-export { getUsersForSidebar, getMessages, markMessageAsSeen, sendMessage, sendMessageImage };
+export { getUsersForSidebar, getMessages, markMessageAsSeen, sendMessage, sendMessageImage, markMessagesAsSeen };

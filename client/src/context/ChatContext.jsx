@@ -62,6 +62,22 @@ const ChatProvider = ({ children }) => {
         }
     }
 
+    // mark all messages from a specific user as seen
+    const markMessagesAsSeen = async(senderId) => {
+        try {
+            const response = await axios.put(`/api/v1/messages/mark-all/${senderId}`)
+            if(response.data.success){
+                // Update unseenMessages state to reflect the change
+                setUnseenMessages(prev => ({
+                    ...prev,
+                    [senderId]: 0
+                }))
+            }
+        } catch (error) {
+            toast.error(error?.response?.data?.messages || "Something went wrong while marking messages as seen.");
+        }
+    }
+
     // function to subscribe to messages for selected user
     const subscribeToMessages = async () => {
         if(!socket) return ;
@@ -104,7 +120,8 @@ const ChatProvider = ({ children }) => {
         getMessages,
         getUsers,
         unseenMessages,
-        sendMessageImage
+        sendMessageImage,
+        markMessagesAsSeen
     }
 
     return (

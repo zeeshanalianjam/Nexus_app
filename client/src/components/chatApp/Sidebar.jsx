@@ -6,7 +6,7 @@ import { ChatContext } from '../../context/ChatContext'
 
 
 const Sidebar = () => {
-  const {getUsers, users, selectedUser, setSelectedUser, unseenMessages, setUnseenMessages} = useContext(ChatContext)
+  const {getUsers, users, selectedUser, setSelectedUser, unseenMessages, markMessagesAsSeen} = useContext(ChatContext)
   const {logout, onlineUsers} = useContext(AuthContext)
 
   const navigate = useNavigate()
@@ -49,16 +49,16 @@ const Sidebar = () => {
       {/* users display section */}
       <div className='flex flex-col'>
         {filteredUsers.map((user, index) => (
-          <div onClick={() => {setSelectedUser(user); setUnseenMessages(prev => ({...prev, [user._id]: 0 })) }} key={index} className={`relative flex items-center gap-2 p-2 pl-4 rounded cursor-pointer max:sm:text-sm ${selectedUser?._id === user?._id && 'bg-[#282142]/50'}`}>
-            <img src={user?.profilePic || assets.avatar_icon} alt="profilePic" className='w-[35px] aspect-[1/1] rounded-full' />
+          <div onClick={() => {setSelectedUser(user); markMessagesAsSeen(user._id)}} key={index} className={`relative flex items-center gap-2 p-2 pl-4 rounded cursor-pointer max:sm:text-sm ${selectedUser?._id === user?._id && 'bg-[#282142]/50'}`}>
+            <img src={user?.profilePicture || assets.avatar_icon} alt="profilePic" className='w-[35px] aspect-[1/1] rounded-full' />
             <div className='flex flex-col leading-5'>
-              <p>{user?.fullName}</p>
+              <p>{user?.username}</p>
               {
                 onlineUsers.includes(user._id) ? <span className='text-green-400 text-xs'>Online</span> : <span className='text-neutral-400 text-xs'>Offline</span>
               }
             </div>
             {/* notifications icons */}
-            {unseenMessages[user._id] > 0 && <p className='absolute top-4 right-4 text-xs h-5 w-5 flex justify-center items-center rounded-full bg-violet-500/50'>{unseenMessages[user._id]}</p>}
+            {unseenMessages[user._id] > 0 && <p className='absolute top-7 right-4 text-xs h-5 w-5 flex justify-center items-center rounded-full bg-violet-500/50'>{unseenMessages[user._id]}</p>}
           </div>
         ))}
       </div>
