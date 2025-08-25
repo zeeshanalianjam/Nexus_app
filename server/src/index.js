@@ -20,6 +20,10 @@ const io = new Server(server, {
     }
 });
 
+app.get("/test", (req, res) => {
+    res.send("Server is running for testing");
+});
+
 // Store online users
 const userSocketMap = {};
 
