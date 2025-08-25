@@ -5,9 +5,7 @@ import cookieParser from 'cookie-parser';
 const app = express();
 
 
-const allowedOrigins = [
-    'http://localhost:5173', 'https://nexus-app-ten.vercel.app'
-];
+const allowedOrigins = process.env.ALLOWED_ORIGINS.split(",");
 app.use(cors({
     origin : allowedOrigins,
     credentials: true

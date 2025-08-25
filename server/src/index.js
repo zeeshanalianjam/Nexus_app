@@ -10,14 +10,12 @@ dotenv.config({
 
 let port = process.env.PORT || 3000;
 
-const allowOrigin = [
-    'http://localhost:5173', 'https://nexus-app-ten.vercel.app'
-]
+const allowedOrigins = process.env.ALLOWED_ORIGINS.split(",");
 
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: allowOrigin,
+        origin: allowedOrigins,
         credentials: true
     }
 });
