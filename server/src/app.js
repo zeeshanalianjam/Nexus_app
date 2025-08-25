@@ -7,8 +7,7 @@ const app = express();
 
 const allowedOrigins = process.env.ALLOWED_ORIGINS
 app.use(cors({
-    origin : allowedOrigins,
-    credentials: true
+    origin : "*"
 }));
 
 app.use(express.json({limit: '16kb'}))
