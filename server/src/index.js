@@ -10,7 +10,7 @@ dotenv.config({
 
 let port = process.env.PORT || 3000;
 
-const allowedOrigins = process.env.ALLOWED_ORIGINS.split(",");
+const allowedOrigins = process.env.ALLOWED_ORIGINS
 
 const server = http.createServer(app);
 const io = new Server(server, {
