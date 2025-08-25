@@ -47,7 +47,7 @@ const AuthProvider = ({ children }) => {
                 toast.success(response.data.message);
             } 
         } catch (error) {
-            console.log("error in auth : ", error)
+            console.log("error in login : ", error)
             toast.error(error?.response?.data?.message || "Something went wrong while logging in.");
         } finally {
             setProfileLoading(false);

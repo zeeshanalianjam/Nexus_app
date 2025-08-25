@@ -10,7 +10,6 @@ export const RightSidebar = () => {
 
   useEffect(() => {
     const images = messages?.filter((msg) => msg.image).map((msg) => msg.image)
-    console.log("images : ", images)
     setMsgImages(images)
   }, [messages])
 
