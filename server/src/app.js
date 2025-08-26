@@ -18,11 +18,13 @@ app.use(express.static('public'));
 // import routes
 import {userRouter} from './routes/user.routes.js';
 import { messageRouter } from './routes/message.routes.js';
+import { collaborationRequestRouter } from './routes/collaborationRequest.routes.js';
 
 
 // use routes
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/messages', messageRouter);
+app.use('/api/v1/collaboration-requests', collaborationRequestRouter)
 
 
 export { app };
