@@ -2,6 +2,7 @@ import { createContext, useEffect, useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { io } from "socket.io-client";
+import { useNavigate } from "react-router-dom";
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 axios.defaults.baseURL = backendUrl;
@@ -16,6 +17,7 @@ const AuthProvider = ({ children }) => {
     const [socket, setSocket] = useState(null);
     const [loading, setLoading] = useState(true);
     const [profileLoading, setProfileLoading] = useState(false);
+    const navigate = useNavigate();
 
     // check if user is authenticated and so if, set the user data and connect the socket
     const checkAuth = async () => {
@@ -45,6 +47,7 @@ const AuthProvider = ({ children }) => {
                 setAuthUser(response.data.data.user);
                 connectSocket(response.data.data.user);
                 toast.success(response.data.message);
+                navigate("/")
             } 
         } catch (error) {
             console.log("error in login : ", error)
@@ -68,6 +71,7 @@ const AuthProvider = ({ children }) => {
                 socket.disconnect();
                 setSocket(null);
             }
+            navigate("/login");
         } catch (error) {
             toast.error(error?.response?.data?.message || "Something went wrong while logging out.");
         } finally {
